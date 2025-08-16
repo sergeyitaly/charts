@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Chart.js Reference Guide</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+    font-size: 10px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 16px;
+    margin: 5px 0 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    page-break-inside: avoid;
+  }
+  td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    vertical-align: top;
+    height: auto;
+  }
+  .chart-container {
+    width: 100%;
+    height: 100px;
+    margin: 0 auto;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  pre {
+    font-family: Consolas, monospace;
+    font-size: 7px;
+    margin: 3px 0;
+    padding: 3px;
+    background: #f5f5f5;
+    border-radius: 2px;
+    overflow: hidden;
+    white-space: pre-wrap;
+  }
+  .chart-title {
+    font-weight: bold;
+    text-align: center;
+    margin: 2px 0;
+    font-size: 9px;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 3px 0;
+    font-size: 8px;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+  }
+  .control-group label {
+    margin-right: 3px;
+    min-width: 20px;
+  }
+  select {
+    font-size: 8px;
+    padding: 1px;
+    width: 100%;
+  }
+  .footer {
+    text-align: center;
+    font-size: 8px;
+    margin-top: 5px;
+    color: #666;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 1cm;
+  }
+  #demo-controls {
+    text-align: center;
+    margin: 10px 0;
+  }
+  button {
+    font-size: 12px;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Chart.js Reference Guide</h1>
+
+<div id="demo-controls">
+  <button id="start-demo">Start Demo</button>
+  <button id="stop-demo">Stop Demo</button>
+</div>
+
+<table>
+  <!-- Row 1 -->
+  <tr>
+    <td>
+      <div class="chart-title">Bar Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>x1:</label><select id="bar-x1" onchange="updateBarChart()"><option>Jan</option><option>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y1:</label><select id="bar-y1" onchange="updateBarChart()"><option>10</option><option>20</option><option selected>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="bar-x2" onchange="updateBarChart()"><option>Jan</option><option selected>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="bar-y2" onchange="updateBarChart()"><option>10</option><option selected>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+        <div class="control-group"><label>x3:</label><select id="bar-x3" onchange="updateBarChart()"><option>Jan</option><option>Feb</option><option selected>Mar</option></select></div>
+        <div class="control-group"><label>y3:</label><select id="bar-y3" onchange="updateBarChart()"><option>10</option><option>20</option><option selected>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+      </div>
+      <div class="chart-container" id="bar-chart-container">
+        <svg viewBox="0 0 300 100" id="bar-svg"></svg>
+      </div>
+      <pre id="bar-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Line Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>x1:</label><select id="line-x1" onchange="updateLineChart()"><option>Jan</option><option>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y1:</label><select id="line-y1" onchange="updateLineChart()"><option>10</option><option>20</option><option selected>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="line-x2" onchange="updateLineChart()"><option>Jan</option><option selected>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="line-y2" onchange="updateLineChart()"><option>10</option><option selected>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+        <div class="control-group"><label>x3:</label><select id="line-x3" onchange="updateLineChart()"><option>Jan</option><option>Feb</option><option selected>Mar</option></select></div>
+        <div class="control-group"><label>y3:</label><select id="line-y3" onchange="updateLineChart()"><option>10</option><option>20</option><option selected>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option></select></div>
+      </div>
+      <div class="chart-container" id="line-chart-container">
+        <svg viewBox="0 0 300 100" id="line-svg"></svg>
+      </div>
+      <pre id="line-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Pie Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>Value 1:</label><select id="pie-v1" onchange="updatePieChart()"><option selected>300</option><option>200</option><option>100</option><option>50</option></select></div>
+        <div class="control-group"><label>Value 2:</label><select id="pie-v2" onchange="updatePieChart()"><option selected>50</option><option>100</option><option>150</option><option>200</option></select></div>
+        <div class="control-group"><label>Value 3:</label><select id="pie-v3" onchange="updatePieChart()"><option selected>100</option><option>150</option><option>200</option><option>250</option></select></div>
+      </div>
+      <div class="chart-container" id="pie-chart-container">
+        <svg viewBox="0 0 300 100" id="pie-svg"></svg>
+      </div>
+      <pre id="pie-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Doughnut Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>Value 1:</label><select id="doughnut-v1" onchange="updateDoughnutChart()"><option selected>300</option><option>200</option><option>100</option><option>50</option></select></div>
+        <div class="control-group"><label>Value 2:</label><select id="doughnut-v2" onchange="updateDoughnutChart()"><option selected>50</option><option>100</option><option>150</option><option>200</option></select></div>
+        <div class="control-group"><label>Value 3:</label><select id="doughnut-v3" onchange="updateDoughnutChart()"><option selected>100</option><option>150</option><option>200</option><option>250</option></select></div>
+      </div>
+      <div class="chart-container" id="doughnut-chart-container">
+        <svg viewBox="0 0 300 100" id="doughnut-svg"></svg>
+      </div>
+      <pre id="doughnut-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Radar Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>Skill 1:</label><select id="radar-v1" onchange="updateRadarChart()"><option selected>65</option><option>50</option><option>35</option><option>80</option></select></div>
+        <div class="control-group"><label>Skill 2:</label><select id="radar-v2" onchange="updateRadarChart()"><option selected>59</option><option>40</option><option>75</option><option>30</option></select></div>
+        <div class="control-group"><label>Skill 3:</label><select id="radar-v3" onchange="updateRadarChart()"><option selected>90</option><option>60</option><option>30</option><option>75</option></select></div>
+      </div>
+      <div class="chart-container" id="radar-chart-container">
+        <svg viewBox="0 0 300 100" id="radar-svg"></svg>
+      </div>
+      <pre id="radar-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Polar Area</div>
+      <div class="controls">
+        <div class="control-group"><label>Value 1:</label><select id="polar-v1" onchange="updatePolarChart()"><option selected>11</option><option>5</option><option>15</option><option>20</option></select></div>
+        <div class="control-group"><label>Value 2:</label><select id="polar-v2" onchange="updatePolarChart()"><option selected>16</option><option>8</option><option>20</option><option>12</option></select></div>
+        <div class="control-group"><label>Value 3:</label><select id="polar-v3" onchange="updatePolarChart()"><option selected>7</option><option>14</option><option>21</option><option>3</option></select></div>
+      </div>
+      <div class="chart-container" id="polar-chart-container">
+        <svg viewBox="0 0 300 100" id="polar-svg"></svg>
+      </div>
+      <pre id="polar-code">// Code will update dynamically</pre>
+    </td>
+  </tr>
+  <!-- Row 2 -->
+  <tr>
+    <td>
+      <div class="chart-title">Bubble Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>x1:</label><select id="bubble-x1" onchange="updateBubbleChart()"><option selected>20</option><option>10</option><option>30</option><option>40</option></select></div>
+        <div class="control-group"><label>y1:</label><select id="bubble-y1" onchange="updateBubbleChart()"><option selected>30</option><option>20</option><option>40</option><option>10</option></select></div>
+        <div class="control-group"><label>size1:</label><select id="bubble-s1" onchange="updateBubbleChart()"><option selected>15</option><option>10</option><option>20</option><option>5</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="bubble-x2" onchange="updateBubbleChart()"><option selected>40</option><option>30</option><option>50</option><option>20</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="bubble-y2" onchange="updateBubbleChart()"><option selected>10</option><option>20</option><option>5</option><option>15</option></select></div>
+        <div class="control-group"><label>size2:</label><select id="bubble-s2" onchange="updateBubbleChart()"><option selected>10</option><option>5</option><option>15</option><option>20</option></select></div>
+      </div>
+      <div class="chart-container" id="bubble-chart-container">
+        <svg viewBox="0 0 300 100" id="bubble-svg"></svg>
+      </div>
+      <pre id="bubble-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Scatter Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>x1:</label><select id="scatter-x1" onchange="updateScatterChart()"><option selected>-10</option><option>0</option><option>10</option><option>-20</option></select></div>
+        <div class="control-group"><label>y1:</label><select id="scatter-y1" onchange="updateScatterChart()"><option selected>0</option><option>10</option><option>-10</option><option>5</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="scatter-x2" onchange="updateScatterChart()"><option selected>0</option><option>10</option><option>-10</option><option>5</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="scatter-y2" onchange="updateScatterChart()"><option selected>10</option><option>0</option><option>20</option><option>-5</option></select></div>
+      </div>
+      <div class="chart-container" id="scatter-chart-container">
+        <svg viewBox="0 0 300 100" id="scatter-svg"></svg>
+      </div>
+      <pre id="scatter-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Horizontal Bar</div>
+      <div class="controls">
+        <div class="control-group"><label>y1:</label><select id="hbar-y1" onchange="updateHBarChart()"><option>Jan</option><option>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>x1:</label><select id="hbar-x1" onchange="updateHBarChart()"><option>10</option><option selected>65</option><option>30</option><option>80</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="hbar-y2" onchange="updateHBarChart()"><option selected>Jan</option><option>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="hbar-x2" onchange="updateHBarChart()"><option>10</option><option selected>59</option><option>30</option><option>80</option></select></div>
+      </div>
+      <div class="chart-container" id="hbar-chart-container">
+        <svg viewBox="0 0 300 100" id="hbar-svg"></svg>
+      </div>
+      <pre id="hbar-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Stacked Bar</div>
+      <div class="controls">
+        <div class="control-group"><label>Set1 y1:</label><select id="stacked-s1y1" onchange="updateStackedChart()"><option selected>10</option><option>5</option><option>15</option><option>20</option></select></div>
+        <div class="control-group"><label>Set1 y2:</label><select id="stacked-s1y2" onchange="updateStackedChart()"><option selected>20</option><option>10</option><option>30</option><option>15</option></select></div>
+        <div class="control-group"><label>Set2 y1:</label><select id="stacked-s2y1" onchange="updateStackedChart()"><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div>
+        <div class="control-group"><label>Set2 y2:</label><select id="stacked-s2y2" onchange="updateStackedChart()"><option selected>15</option><option>5</option><option>25</option><option>10</option></select></div>
+      </div>
+      <div class="chart-container" id="stacked-chart-container">
+        <svg viewBox="0 0 300 100" id="stacked-svg"></svg>
+      </div>
+      <pre id="stacked-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Mixed Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>Bar y1:</label><select id="mixed-y1" onchange="updateMixedChart()"><option selected>10</option><option>5</option><option>15</option><option>20</option></select></div>
+        <div class="control-group"><label>Bar y2:</label><select id="mixed-y2" onchange="updateMixedChart()"><option selected>20</option><option>10</option><option>30</option><option>15</option></select></div>
+        <div class="control-group"><label>Line y1:</label><select id="mixed-line1" onchange="updateMixedChart()"><option selected>50</option><option>40</option><option>60</option><option>30</option></select></div>
+        <div class="control-group"><label>Line y2:</label><select id="mixed-line2" onchange="updateMixedChart()"><option selected>50</option><option>60</option><option>40</option><option>30</option></select></div>
+      </div>
+      <div class="chart-container" id="mixed-chart-container">
+        <svg viewBox="0 0 300 100" id="mixed-svg"></svg>
+      </div>
+      <pre id="mixed-code">// Code will update dynamically</pre>
+    </td>
+    <td>
+      <div class="chart-title">Area Chart</div>
+      <div class="controls">
+        <div class="control-group"><label>x1:</label><select id="area-x1" onchange="updateAreaChart()"><option>Jan</option><option>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y1:</label><select id="area-y1" onchange="updateAreaChart()"><option selected>30</option><option>20</option><option>40</option><option>10</option></select></div>
+        <div class="control-group"><label>x2:</label><select id="area-x2" onchange="updateAreaChart()"><option>Jan</option><option selected>Feb</option><option>Mar</option></select></div>
+        <div class="control-group"><label>y2:</label><select id="area-y2" onchange="updateAreaChart()"><option selected>25</option><option>15</option><option>35</option><option>5</option></select></div>
+      </div>
+      <div class="chart-container" id="area-chart-container">
+        <svg viewBox="0 0 300 100" id="area-svg"></svg>
+      </div>
+      <pre id="area-code">// Code will update dynamically</pre>
+    </td>
+  </tr>
+</table>
+
+<div class="footer">Interactive Chart.js Reference</div>
+
+<script>
+// Helper function for polar coordinates
+function getPointOnCircle(cx, cy, radius, angle) {
+  const rad = (angle - 90) * Math.PI / 180;
+  return `${cx + radius * Math.cos(rad)},${cy + radius * Math.sin(rad)}`;
+}
+
+// Bar Chart
+function updateBarChart() {
+  const x1 = document.getElementById('bar-x1').value;
+  const x2 = document.getElementById('bar-x2').value;
+  const x3 = document.getElementById('bar-x3').value;
+  const y1 = parseInt(document.getElementById('bar-y1').value);
+  const y2 = parseInt(document.getElementById('bar-y2').value);
+  const y3 = parseInt(document.getElementById('bar-y3').value);
+  
+  const maxY = Math.max(y1, y2, y3);
+  const scaleFactor = 60 / maxY;
+  
+  document.getElementById('bar-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <rect x="40" y="${80 - y1 * scaleFactor}" width="40" height="${y1 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <rect x="100" y="${80 - y2 * scaleFactor}" width="40" height="${y2 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <rect x="160" y="${80 - y3 * scaleFactor}" width="40" height="${y3 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <text x="60" y="95" text-anchor="middle" font-size="8">${x1}</text>
+    <text x="120" y="95" text-anchor="middle" font-size="8">${x2}</text>
+    <text x="180" y="95" text-anchor="middle" font-size="8">${x3}</text>
+  `;
+  
+  document.getElementById('bar-code').textContent = `const data = {
+  labels: ['${x1}', '${x2}', '${x3}'],
+  datasets: [{
+    label: 'Sales',
+    data: [${y1}, ${y2}, ${y3}],
+    backgroundColor: 'rgba(255,99,132,0.5)'
+  }]
+};
+new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: { scales: { y: { beginAtZero: true } } }
+});`;
+}
+
+// Line Chart
+function updateLineChart() {
+  const x1 = document.getElementById('line-x1').value;
+  const x2 = document.getElementById('line-x2').value;
+  const x3 = document.getElementById('line-x3').value;
+  const y1 = parseInt(document.getElementById('line-y1').value);
+  const y2 = parseInt(document.getElementById('line-y2').value);
+  const y3 = parseInt(document.getElementById('line-y3').value);
+  
+  const maxY = Math.max(y1, y2, y3);
+  const scaleFactor = 60 / maxY;
+  
+  document.getElementById('line-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <path d="M40,${80 - y1 * scaleFactor} L100,${80 - y2 * scaleFactor} L160,${80 - y3 * scaleFactor}" 
+          fill="none" stroke="rgb(75,192,192)" stroke-width="2" />
+    <circle cx="40" cy="${80 - y1 * scaleFactor}" r="3" fill="rgb(75,192,192)" />
+    <circle cx="100" cy="${80 - y2 * scaleFactor}" r="3" fill="rgb(75,192,192)" />
+    <circle cx="160" cy="${80 - y3 * scaleFactor}" r="3" fill="rgb(75,192,192)" />
+    <text x="40" y="95" text-anchor="middle" font-size="8">${x1}</text>
+    <text x="100" y="95" text-anchor="middle" font-size="8">${x2}</text>
+    <text x="160" y="95" text-anchor="middle" font-size="8">${x3}</text>
+  `;
+  
+  document.getElementById('line-code').textContent = `const data = {
+  labels: ['${x1}', '${x2}', '${x3}'],
+  datasets: [{
+    label: 'Temperature',
+    data: [${y1}, ${y2}, ${y3}],
+    fill: false,
+    borderColor: 'rgb(75,192,192)'
+  }]
+};
+new Chart(ctx, {
+  type: 'line',
+  data: data
+});`;
+}
+
+// Pie Chart
+function updatePieChart() {
+  const v1 = parseInt(document.getElementById('pie-v1').value);
+  const v2 = parseInt(document.getElementById('pie-v2').value);
+  const v3 = parseInt(document.getElementById('pie-v3').value);
+  const total = v1 + v2 + v3;
+  const angle1 = (v1 / total) * 360;
+  const angle2 = (v2 / total) * 360;
+  
+  document.getElementById('pie-svg').innerHTML = `
+    <path d="M150,50 L150,20 A30,30 0 ${angle1 > 180 ? 1 : 0},1 ${getPointOnCircle(150, 50, 30, angle1)} Z" 
+          fill="rgb(255,99,132)" />
+    <path d="M150,50 L${getPointOnCircle(150, 50, 30, angle1)} A30,30 0 ${angle2 > 180 ? 1 : 0},1 ${getPointOnCircle(150, 50, 30, angle1 + angle2)} Z" 
+          fill="rgb(54,162,235)" />
+    <path d="M150,50 L${getPointOnCircle(150, 50, 30, angle1 + angle2)} A30,30 0 ${(360 - angle1 - angle2) > 180 ? 1 : 0},1 150,20 Z" 
+          fill="rgb(255,205,86)" />
+    <text x="170" y="30" text-anchor="middle" font-size="8">Red (${v1})</text>
+    <text x="160" y="70" text-anchor="middle" font-size="8">Blue (${v2})</text>
+    <text x="130" y="60" text-anchor="middle" font-size="8">Yellow (${v3})</text>
+  `;
+  
+  document.getElementById('pie-code').textContent = `const data = {
+  labels: ['Red', 'Blue', 'Yellow'],
+  datasets: [{
+    data: [${v1}, ${v2}, ${v3}],
+    backgroundColor: [
+      'rgb(255,99,132)',
+      'rgb(54,162,235)',
+      'rgb(255,205,86)'
+    ]
+  }]
+};
+new Chart(ctx, {
+  type: 'pie',
+  data: data
+});`;
+}
+
+// Doughnut Chart
+function updateDoughnutChart() {
+  const v1 = parseInt(document.getElementById('doughnut-v1').value);
+  const v2 = parseInt(document.getElementById('doughnut-v2').value);
+  const v3 = parseInt(document.getElementById('doughnut-v3').value);
+  const total = v1 + v2 + v3;
+  const angle1 = (v1 / total) * 360;
+  const angle2 = (v2 / total) * 360;
+  
+  document.getElementById('doughnut-svg').innerHTML = `
+    <path d="M150,50 L150,20 A30,30 0 ${angle1 > 180 ? 1 : 0},1 ${getPointOnCircle(150, 50, 30, angle1)} Z" 
+          fill="rgb(255,99,132)" />
+    <path d="M150,50 L${getPointOnCircle(150, 50, 30, angle1)} A30,30 0 ${angle2 > 180 ? 1 : 0},1 ${getPointOnCircle(150, 50, 30, angle1 + angle2)} Z" 
+          fill="rgb(54,162,235)" />
+    <path d="M150,50 L${getPointOnCircle(150, 50, 30, angle1 + angle2)} A30,30 0 ${(360 - angle1 - angle2) > 180 ? 1 : 0},1 150,20 Z" 
+          fill="rgb(255,205,86)" />
+    <circle cx="150" cy="50" r="15" fill="white" />
+    <text x="170" y="30" text-anchor="middle" font-size="8">Red (${v1})</text>
+    <text x="160" y="70" text-anchor="middle" font-size="8">Blue (${v2})</text>
+    <text x="130" y="60" text-anchor="middle" font-size="8">Yellow (${v3})</text>
+  `;
+  
+  document.getElementById('doughnut-code').textContent = `const data = {
+  labels: ['Red', 'Blue', 'Yellow'],
+  datasets: [{
+    data: [${v1}, ${v2}, ${v3}],
+    backgroundColor: [
+      'rgb(255,99,132)',
+      'rgb(54,162,235)',
+      'rgb(255,205,86)'
+    ]
+  }]
+};
+new Chart(ctx, {
+  type: 'doughnut',
+  data: data
+});`;
+}
+
+// Radar Chart
+function updateRadarChart() {
+  const v1 = parseInt(document.getElementById('radar-v1').value);
+  const v2 = parseInt(document.getElementById('radar-v2').value);
+  const v3 = parseInt(document.getElementById('radar-v3').value);
+  const maxV = Math.max(v1, v2, v3);
+  const scale = 30 / maxV;
+  
+  document.getElementById('radar-svg').innerHTML = `
+    <polygon points="150,20 180,40 180,70 150,90 120,70 120,40" fill="none" stroke="#ddd" />
+    <polygon points="150,35 165,45 165,65 150,75 135,65 135,45" fill="none" stroke="#ddd" />
+    <polygon points="150,50 155,55 155,65 150,70 145,65 145,55" fill="none" stroke="#ddd" />
+    <polygon points="150,${50 - v1 * scale} ${150 + v2 * scale * 0.866},${50 + v2 * scale * 0.5} ${150 + v3 * scale * 0.5},${50 + v3 * scale * 0.866} ${150 - v1 * scale * 0.5},${50 + v1 * scale * 0.866} ${150 - v3 * scale * 0.866},${50 + v3 * scale * 0.5} ${150 - v2 * scale * 0.5},${50 - v2 * scale * 0.866}" 
+            fill="rgba(255,99,132,0.2)" stroke="rgb(255,99,132)" />
+    <text x="150" y="15" text-anchor="middle" font-size="6">Eat (${v1})</text>
+    <text x="190" y="55" text-anchor="middle" font-size="6">Sleep (${v2})</text>
+    <text x="150" y="95" text-anchor="middle" font-size="6">Code (${v3})</text>
+  `;
+  
+  document.getElementById('radar-code').textContent = `const data = {
+  labels: ['Eat', 'Sleep', 'Code'],
+  datasets: [{
+    label: 'Skills',
+    data: [${v1}, ${v2}, ${v3}],
+    fill: true,
+    backgroundColor: 'rgba(255,99,132,0.2)',
+    borderColor: 'rgb(255,99,132)'
+  }]
+};
+new Chart(ctx, {
+  type: 'radar',
+  data: data
+});`;
+}
+
+// Polar Area Chart
+function updatePolarChart() {
+  const v1 = parseInt(document.getElementById('polar-v1').value);
+  const v2 = parseInt(document.getElementById('polar-v2').value);
+  const v3 = parseInt(document.getElementById('polar-v3').value);
+  const maxV = Math.max(v1, v2, v3);
+  const scale = 30 / maxV;
+  
+  document.getElementById('polar-svg').innerHTML = `
+    <path d="M150,50 L150,${50 - v1 * scale} A${v1 * scale},${v1 * scale} 0 0,1 ${150 + v1 * scale},50 Z" 
+          fill="rgb(255,99,132)" />
+    <path d="M150,50 L${150 + v2 * scale},50 A${v2 * scale},${v2 * scale} 0 0,1 150,${50 + v2 * scale} Z" 
+          fill="rgb(75,192,192)" />
+    <path d="M150,50 L150,${50 + v3 * scale} A${v3 * scale},${v3 * scale} 0 0,1 ${150 - v3 * scale},50 Z" 
+          fill="rgb(255,205,86)" />
+    <text x="170" y="30" text-anchor="middle" font-size="8">Red (${v1})</text>
+    <text x="160" y="70" text-anchor="middle" font-size="8">Green (${v2})</text>
+    <text x="130" y="60" text-anchor="middle" font-size="8">Yellow (${v3})</text>
+  `;
+  
+  document.getElementById('polar-code').textContent = `const data = {
+  labels: ['Red', 'Green', 'Yellow'],
+  datasets: [{
+    data: [${v1}, ${v2}, ${v3}],
+    backgroundColor: [
+      'rgb(255,99,132)',
+      'rgb(75,192,192)',
+      'rgb(255,205,86)'
+    ]
+  }]
+};
+new Chart(ctx, {
+  type: 'polarArea',
+  data: data
+});`;
+}
+
+// Bubble Chart
+function updateBubbleChart() {
+  const x1 = parseInt(document.getElementById('bubble-x1').value);
+  const y1 = parseInt(document.getElementById('bubble-y1').value);
+  const s1 = parseInt(document.getElementById('bubble-s1').value);
+  const x2 = parseInt(document.getElementById('bubble-x2').value);
+  const y2 = parseInt(document.getElementById('bubble-y2').value);
+  const s2 = parseInt(document.getElementById('bubble-s2').value);
+  
+  // Scale factors to fit in the SVG
+  const xScale = 250 / 50;
+  const yScale = 60 / 50;
+  const sizeScale = 20 / 20;
+  
+  document.getElementById('bubble-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <circle cx="${20 + x1 * xScale}" cy="${80 - y1 * yScale}" r="${s1 * sizeScale}" fill="rgb(255,99,132)" />
+    <circle cx="${20 + x2 * xScale}" cy="${80 - y2 * yScale}" r="${s2 * sizeScale}" fill="rgb(255,99,132)" />
+    <text x="${20 + x1 * xScale}" y="${80 - y1 * yScale - s1 * sizeScale - 5}" text-anchor="middle" font-size="6">(${x1},${y1})</text>
+    <text x="${20 + x2 * xScale}" y="${80 - y2 * yScale - s2 * sizeScale - 5}" text-anchor="middle" font-size="6">(${x2},${y2})</text>
+  `;
+  
+  document.getElementById('bubble-code').textContent = `const data = {
+  datasets: [{
+    data: [
+      {x: ${x1}, y: ${y1}, r: ${s1}},
+      {x: ${x2}, y: ${y2}, r: ${s2}}
+    ],
+    backgroundColor: 'rgb(255,99,132)'
+  }]
+};
+new Chart(ctx, {
+  type: 'bubble',
+  data: data
+});`;
+}
+
+// Scatter Chart
+function updateScatterChart() {
+  const x1 = parseInt(document.getElementById('scatter-x1').value);
+  const y1 = parseInt(document.getElementById('scatter-y1').value);
+  const x2 = parseInt(document.getElementById('scatter-x2').value);
+  const y2 = parseInt(document.getElementById('scatter-y2').value);
+  
+  // Scale factors to fit in the SVG
+  const xScale = 250 / 20;
+  const yScale = 60 / 20;
+  const xOffset = 20 + (xScale * 10); // Center around 0
+  const yOffset = 80 - (yScale * 10); // Center around 0
+  
+  document.getElementById('scatter-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <circle cx="${xOffset + x1 * xScale}" cy="${yOffset - y1 * yScale}" r="3" fill="rgb(255,99,132)" />
+    <circle cx="${xOffset + x2 * xScale}" cy="${yOffset - y2 * yScale}" r="3" fill="rgb(255,99,132)" />
+    <text x="${xOffset + x1 * xScale}" y="${yOffset - y1 * yScale - 8}" text-anchor="middle" font-size="6">(${x1},${y1})</text>
+    <text x="${xOffset + x2 * xScale}" y="${yOffset - y2 * yScale - 8}" text-anchor="middle" font-size="6">(${x2},${y2})</text>
+  `;
+  
+  document.getElementById('scatter-code').textContent = `const data = {
+  datasets: [{
+    data: [
+      {x: ${x1}, y: ${y1}},
+      {x: ${x2}, y: ${y2}}
+    ],
+    backgroundColor: 'rgb(255,99,132)'
+  }]
+};
+new Chart(ctx, {
+  type: 'scatter',
+  data: data,
+  options: {
+    scales: {
+      x: { type: 'linear', position: 'bottom' }
+    }
+  }
+});`;
+}
+
+// Horizontal Bar Chart
+function updateHBarChart() {
+  const y1 = document.getElementById('hbar-y1').value;
+  const x1 = parseInt(document.getElementById('hbar-x1').value);
+  const y2 = document.getElementById('hbar-y2').value;
+  const x2 = parseInt(document.getElementById('hbar-x2').value);
+  
+  const maxX = Math.max(x1, x2);
+  const scaleFactor = 250 / maxX;
+  
+  document.getElementById('hbar-svg').innerHTML = `
+    <line x1="20" y1="20" x2="20" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <rect x="20" y="30" width="${x1 * scaleFactor}" height="20" fill="rgba(255,159,64,0.5)" />
+    <rect x="20" y="60" width="${x2 * scaleFactor}" height="20" fill="rgba(255,159,64,0.5)" />
+    <text x="10" y="40" text-anchor="end" font-size="8">${y1}</text>
+    <text x="10" y="70" text-anchor="end" font-size="8">${y2}</text>
+  `;
+  
+  document.getElementById('hbar-code').textContent = `const data = {
+  labels: ['${y1}', '${y2}'],
+  datasets: [{
+    axis: 'y',
+    data: [${x1}, ${x2}],
+    backgroundColor: 'rgba(255,159,64,0.5)'
+  }]
+};
+new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: { indexAxis: 'y' }
+});`;
+}
+
+// Stacked Bar Chart
+function updateStackedChart() {
+  const s1y1 = parseInt(document.getElementById('stacked-s1y1').value);
+  const s1y2 = parseInt(document.getElementById('stacked-s1y2').value);
+  const s2y1 = parseInt(document.getElementById('stacked-s2y1').value);
+  const s2y2 = parseInt(document.getElementById('stacked-s2y2').value);
+  
+  const maxY = Math.max(s1y1 + s2y1, s1y2 + s2y2);
+  const scaleFactor = 60 / maxY;
+  
+  document.getElementById('stacked-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <!-- First stack -->
+    <rect x="40" y="${80 - (s1y1 + s2y1) * scaleFactor}" width="40" height="${s1y1 * scaleFactor}" fill="rgba(75,192,192,0.5)" />
+    <rect x="40" y="${80 - s2y1 * scaleFactor}" width="40" height="${s2y1 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <!-- Second stack -->
+    <rect x="100" y="${80 - (s1y2 + s2y2) * scaleFactor}" width="40" height="${s1y2 * scaleFactor}" fill="rgba(75,192,192,0.5)" />
+    <rect x="100" y="${80 - s2y2 * scaleFactor}" width="40" height="${s2y2 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <!-- Labels -->
+    <text x="60" y="95" text-anchor="middle" font-size="8">Jan</text>
+    <text x="120" y="95" text-anchor="middle" font-size="8">Feb</text>
+  `;
+  
+  document.getElementById('stacked-code').textContent = `const data = {
+  labels: ['Jan', 'Feb'],
+  datasets: [{
+    data: [${s1y1}, ${s1y2}],
+    backgroundColor: 'rgba(75,192,192,0.5)'
+  }, {
+    data: [${s2y1}, ${s2y2}],
+    backgroundColor: 'rgba(255,99,132,0.5)'
+  }]
+};
+new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: {
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true }
+    }
+  }
+});`;
+}
+
+// Mixed Chart
+function updateMixedChart() {
+  const y1 = parseInt(document.getElementById('mixed-y1').value);
+  const y2 = parseInt(document.getElementById('mixed-y2').value);
+  const line1 = parseInt(document.getElementById('mixed-line1').value);
+  const line2 = parseInt(document.getElementById('mixed-line2').value);
+  
+  const maxY = Math.max(y1, y2, line1, line2);
+  const scaleFactor = 60 / maxY;
+  
+  document.getElementById('mixed-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <!-- Bars -->
+    <rect x="40" y="${80 - y1 * scaleFactor}" width="40" height="${y1 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <rect x="100" y="${80 - y2 * scaleFactor}" width="40" height="${y2 * scaleFactor}" fill="rgba(255,99,132,0.5)" />
+    <!-- Line -->
+    <line x1="60" y1="${80 - line1 * scaleFactor}" x2="120" y2="${80 - line2 * scaleFactor}" stroke="rgb(54,162,235)" stroke-width="2" />
+    <circle cx="60" cy="${80 - line1 * scaleFactor}" r="3" fill="rgb(54,162,235)" />
+    <circle cx="120" cy="${80 - line2 * scaleFactor}" r="3" fill="rgb(54,162,235)" />
+    <!-- Labels -->
+    <text x="60" y="95" text-anchor="middle" font-size="8">Jan</text>
+    <text x="120" y="95" text-anchor="middle" font-size="8">Feb</text>
+  `;
+  
+  document.getElementById('mixed-code').textContent = `const data = {
+  labels: ['Jan', 'Feb'],
+  datasets: [{
+    type: 'bar',
+    data: [${y1}, ${y2}],
+    backgroundColor: 'rgba(255,99,132,0.5)'
+  }, {
+    type: 'line',
+    data: [${line1}, ${line2}],
+    fill: false,
+    borderColor: 'rgb(54,162,235)'
+  }]
+};
+new Chart(ctx, { data: data });`;
+}
+
+// Area Chart
+function updateAreaChart() {
+  const x1 = document.getElementById('area-x1').value;
+  const y1 = parseInt(document.getElementById('area-y1').value);
+  const x2 = document.getElementById('area-x2').value;
+  const y2 = parseInt(document.getElementById('area-y2').value);
+  
+  const maxY = Math.max(y1, y2);
+  const scaleFactor = 60 / maxY;
+  
+  document.getElementById('area-svg').innerHTML = `
+    <line x1="20" y1="80" x2="280" y2="80" stroke="#333" stroke-width="1" />
+    <line x1="20" y1="80" x2="20" y2="20" stroke="#333" stroke-width="1" />
+    <path d="M40,${80 - y1 * scaleFactor} L100,${80 - y2 * scaleFactor} L100,80 L40,80 Z" 
+          fill="rgba(75,192,192,0.2)" stroke="rgb(75,192,192)" stroke-width="1" />
+    <circle cx="40" cy="${80 - y1 * scaleFactor}" r="3" fill="rgb(75,192,192)" />
+    <circle cx="100" cy="${80 - y2 * scaleFactor}" r="3" fill="rgb(75,192,192)" />
+    <text x="40" y="95" text-anchor="middle" font-size="8">${x1}</text>
+    <text x="100" y="95" text-anchor="middle" font-size="8">${x2}</text>
+  `;
+  
+  document.getElementById('area-code').textContent = `const data = {
+  labels: ['${x1}', '${x2}'],
+  datasets: [{
+    data: [${y1}, ${y2}],
+    fill: true,
+    backgroundColor: 'rgba(75,192,192,0.2)',
+    borderColor: 'rgb(75,192,192)'
+  }]
+};
+new Chart(ctx, {
+  type: 'line',
+  data: data
+});`;
+}
+
+// Initialize all charts
+function initializeCharts() {
+  updateBarChart();
+  updateLineChart();
+  updatePieChart();
+  updateDoughnutChart();
+  updateRadarChart();
+  updatePolarChart();
+  updateBubbleChart();
+  updateScatterChart();
+  updateHBarChart();
+  updateStackedChart();
+  updateMixedChart();
+  updateAreaChart();
+}
+
+// Demo mode variables
+let demoInterval;
+let demoCycles = 0;
+const totalDemoCycles = 300;
+
+// Function to get random option index
+function getRandomOptionIndex(selectElement) {
+  return Math.floor(Math.random() * selectElement.options.length);
+}
+
+// Function to update all charts with random values
+function updateAllChartsRandomly() {
+  // Get all select elements and update them with random values
+  const selects = document.querySelectorAll('select');
+  selects.forEach(select => {
+    const randomIndex = getRandomOptionIndex(select);
+    select.selectedIndex = randomIndex;
+  });
+  
+  // Update all charts
+  initializeCharts();
+  
+  // Count cycles
+  demoCycles++;
+  if (demoCycles >= totalDemoCycles) {
+    clearInterval(demoInterval);
+    document.getElementById('start-demo').disabled = false;
+  }
+}
+
+// Start demo mode
+function startDemo() {
+  demoCycles = 0;
+  document.getElementById('start-demo').disabled = true;
+  demoInterval = setInterval(updateAllChartsRandomly, 100); // Update every 2 seconds
+}
+
+// Stop demo mode
+function stopDemo() {
+  clearInterval(demoInterval);
+  document.getElementById('start-demo').disabled = false;
+}
+
+// Initialize on page load
+window.onload = function() {
+  initializeCharts();
+  
+  // Add event listeners for demo buttons
+  document.getElementById('start-demo').addEventListener('click', startDemo);
+  document.getElementById('stop-demo').addEventListener('click', stopDemo);
+};
+</script>
+
+</body>
+</html>
