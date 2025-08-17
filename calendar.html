@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced Calendar Visualizations</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f7fa;
+    color: #333;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+  
+  .visualization:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+  
+  .visualization h2 {
+    margin-top: 0;
+    color: #3498db;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .visualization-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .visualization {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 400px;
+  }
+
+  .gantt-chart {
+    display: grid;
+    grid-template-columns: 150px repeat(12, 1fr);
+    gap: 4px;
+    margin-top: 15px;
+  }
+  
+.time-scale {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  text-align: center;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+  height: 60px; 
+  align-items: end; 
+}
+
+.time-scale span {
+  display: inline-block;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  white-space: nowrap;
+  height: 20px;
+  width: 20px;
+  margin-bottom: -20px; 
+  text-align: left;
+}
+  
+  .project-row {
+    display: contents;
+  }
+  
+  .project-label {
+    grid-column: 1;
+    padding: 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+  }
+  
+  .task-bar {
+    height: 20px;
+    background-color: #3498db;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .task-bar:hover {
+    opacity: 0.8;
+  }
+  
+  .task-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 100%);
+  }
+  
+  .milestone {
+    width: 12px;
+    height: 12px;
+    background-color: #e74c3c;
+    border-radius: 50%;
+    position: absolute;
+    right: -6px;
+    top: 4px;
+    z-index: 2;
+  }
+  
+  /* Time Blocks Styles */
+  .day-blocks {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+    height: 120px;
+  }
+  
+  .day {
+    flex: 1;
+    background: linear-gradient(to top, #e74c3c var(--busyness), #ecf0f1 0);
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .day:hover {
+    transform: scaleY(1.05);
+  }
+  
+  /* Circular Time Styles */
+  .time-circle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .time-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient(
+      #f39c12 0% var(--morning-end),
+      #3498db var(--morning-end) var(--afternoon-end),
+      #9b59b6 var(--afternoon-end) var(--evening-end),
+      #2c3e50 var(--evening-end) 100%
+    );
+  }
+  
+  .time-label {
+    position: absolute;
+    font-size: 0.8rem;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  
+  .time-label:nth-child(1) { top: 10%; left: 50%; transform: translateX(-50%); }
+  .time-label:nth-child(2) { top: 50%; right: 10%; transform: translateY(-50%); }
+  .time-label:nth-child(3) { bottom: 10%; left: 50%; transform: translateX(-50%); }
+  .time-label:nth-child(4) { top: 50%; left: 10%; transform: translateY(-50%); }
+  
+  /* Heatmap Calendar Styles */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(52, 1fr);
+    grid-template-rows: repeat(7, 10px);
+    gap: 2px;
+    margin-top: 15px;
+  }
+  
+  .heatmap-cell {
+    background-color: #ecf0f1;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .heatmap-cell:hover {
+    opacity: 0.7;
+  }
+  
+  .controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+  }
+  
+  button:hover {
+    background: #2980b9;
+  }
+  
+  select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 0.8rem;
+  }
+  
+  .code-container {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    margin-top: 15px;
+  }
+  
+  /* Calendar examples */
+  .mini-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-top: 10px;
+    font-size: 0.6rem;
+  }
+  
+  .mini-calendar-day {
+    padding: 2px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #f0f0f0;
+  }
+  
+  .mini-calendar-day.today {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .mini-calendar-day.weekend {
+    background-color: #e0e0e0;
+  }
+  
+  .mini-calendar-header {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2px;
+    font-size: 0.7rem;
+  }
+  
+  .project-details {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .project-details-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .project-details-label {
+    font-weight: bold;
+    color: #7f8c8d;
+  }
+  
+  @media (max-width: 900px) {
+    .visualization-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .gantt-chart {
+      grid-template-columns: 100px repeat(12, 1fr);
+      font-size: 0.7rem;
+    }
+    
+    .heatmap-grid {
+      grid-template-columns: repeat(26, 1fr);
+    }
+  }
+
+.code-wrapper {
+  margin-top: 15px;
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2c3e50;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px 6px 0 0;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.code-container {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 15px;
+  border-radius: 0 0 6px 6px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
+  display: none; /* hidden by default */
+}
+
+.copy-btn {
+  background: #3498db;
+  border: none;
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #2980b9;
+}
+
+
+</style>
+</head>
+<body>
+<h1>Enhanced Calendar Visualizations</h1>
+
+<div class="visualization-container">
+
+  <!-- Gantt Chart -->
+  <div class="visualization">
+    <h2>1. Gantt Chart Timeline with Multiple Projects</h2>
+    <div class="controls">
+      <button onclick="randomizeGantt()">Randomize Projects</button>
+      <select id="gantt-timeframe" onchange="updateGantt()">
+        <option value="months">Months</option>
+        <option value="weeks">Weeks</option>
+        <option value="quarters">Quarters</option>
+      </select>
+      <button onclick="addNewProject()">Add New Project</button>
+    </div>
+    <div class="gantt-chart" id="gantt-chart"></div>
+    <div class="project-details" id="project-details"></div>
+
+    <div class="code-wrapper">
+      <div class="code-header" onclick="toggleCode('gantt-code')">
+        <span>Show/Hide Code</span>
+        <button class="copy-btn" onclick="copyCode(event, 'gantt-code')">Copy</button>
+      </div>
+      <div class="code-container" id="gantt-code">
+        // Gantt chart code will appear here
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Block Visualization -->
+  <div class="visualization">
+    <h2>2. Time Block Visualization</h2>
+    <div class="controls">
+      <button onclick="randomizeTimeBlocks()">Randomize</button>
+      <select id="timeblock-mode" onchange="updateTimeBlocks()">
+        <option value="week">Week View</option>
+        <option value="day">Day View</option>
+      </select>
+    </div>
+    <div class="day-blocks" id="day-blocks"></div>
+
+    <div class="code-wrapper">
+      <div class="code-header" onclick="toggleCode('timeblocks-code')">
+        <span>Show/Hide Code</span>
+        <button class="copy-btn" onclick="copyCode(event, 'timeblocks-code')">Copy</button>
+      </div>
+      <div class="code-container" id="timeblocks-code">
+        // Time blocks code will appear here
+      </div>
+    </div>
+  </div>
+
+  <!-- Circular Time Visualization -->
+  <div class="visualization">
+    <h2>3. Circular Time Visualization</h2>
+    <div class="controls">
+      <button onclick="randomizeCircularTime()">Randomize</button>
+      <select id="circular-mode" onchange="updateCircularTime()">
+        <option value="day">Day Segments</option>
+        <option value="week">Week Segments</option>
+      </select>
+    </div>
+    <div class="time-circle-container">
+      <div class="time-circle" id="time-circle">
+        <div class="time-label">Morning</div>
+        <div class="time-label">Afternoon</div>
+        <div class="time-label">Evening</div>
+        <div class="time-label">Night</div>
+      </div>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-header" onclick="toggleCode('circular-code')">
+        <span>Show/Hide Code</span>
+        <button class="copy-btn" onclick="copyCode(event, 'circular-code')">Copy</button>
+      </div>
+      <div class="code-container" id="circular-code">
+        // Circular time code will appear here
+      </div>
+    </div>
+  </div>
+
+  <!-- Heatmap Calendar -->
+  <div class="visualization">
+    <h2>4. Heatmap Calendar</h2>
+    <div class="controls">
+      <button onclick="randomizeHeatmap()">Randomize</button>
+      <select id="heatmap-mode" onchange="updateHeatmap()">
+        <option value="year">Year View</option>
+        <option value="month">Month View</option>
+      </select>
+    </div>
+    <div class="heatmap-grid" id="heatmap-grid"></div>
+
+    <div class="code-wrapper">
+      <div class="code-header" onclick="toggleCode('heatmap-code')">
+        <span>Show/Hide Code</span>
+        <button class="copy-btn" onclick="copyCode(event, 'heatmap-code')">Copy</button>
+      </div>
+      <div class="code-container" id="heatmap-code">
+        // Heatmap code will appear here
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Helper functions
+function getRandomColor() {
+  const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', 
+                 '#f39c12', '#1abc9c', '#8e44ad', '#27ae60'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateMiniCalendar() {
+  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const today = getRandomInt(1, 28);
+  
+  let calendarHTML = '<div class="mini-calendar">';
+  calendarHTML += '<div class="mini-calendar-header">Current Month</div>';
+  
+  // Generate days of week headers
+  days.forEach(day => {
+    calendarHTML += `<div class="mini-calendar-day">${day}</div>`;
+  });
+  
+  // Generate calendar days
+  for (let i = 1; i <= 28; i++) {
+    const isToday = i === today;
+    const isWeekend = i % 7 === 0 || i % 7 === 1;
+    calendarHTML += `<div class="mini-calendar-day ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">${i}</div>`;
+  }
+  
+  calendarHTML += '</div>';
+  return calendarHTML;
+}
+
+// Project data
+let projects = [
+  {
+    id: 1,
+    name: 'Website Redesign',
+    tasks: [
+      { name: 'Planning', start: 0, end: 2, color: '#3498db', milestone: false },
+      { name: 'Design', start: 1, end: 3, color: '#9b59b6', milestone: false },
+      { name: 'Development', start: 3, end: 7, color: '#2ecc71', milestone: false },
+      { name: 'Launch', start: 7, end: 7, color: '#e74c3c', milestone: true }
+    ],
+    owner: 'Sarah Johnson',
+    status: 'In Progress',
+    progress: 45,
+    calendar: generateMiniCalendar()
+  },
+  {
+    id: 2,
+    name: 'Mobile App',
+    tasks: [
+      { name: 'Research', start: 0, end: 1, color: '#f39c12', milestone: false },
+      { name: 'Prototype', start: 1, end: 3, color: '#3498db', milestone: false },
+      { name: 'UI Design', start: 2, end: 5, color: '#9b59b6', milestone: false },
+      { name: 'Beta Release', start: 5, end: 5, color: '#e74c3c', milestone: true },
+      { name: 'Testing', start: 5, end: 8, color: '#1abc9c', milestone: false }
+    ],
+    owner: 'Michael Chen',
+    status: 'On Track',
+    progress: 30,
+    calendar: generateMiniCalendar()
+  },
+  {
+    id: 3,
+    name: 'Marketing Campaign',
+    tasks: [
+      { name: 'Strategy', start: 2, end: 3, color: '#8e44ad', milestone: false },
+      { name: 'Content Creation', start: 3, end: 6, color: '#3498db', milestone: false },
+      { name: 'Launch Prep', start: 6, end: 8, color: '#f39c12', milestone: false },
+      { name: 'Campaign Start', start: 8, end: 8, color: '#e74c3c', milestone: true }
+    ],
+    owner: 'Emma Davis',
+    status: 'Not Started',
+    progress: 0,
+    calendar: generateMiniCalendar()
+  }
+];
+
+// Gantt Chart Functions
+
+function updateGantt() {
+  const timeframe = document.getElementById('gantt-timeframe').value;
+  const ganttChart = document.getElementById('gantt-chart');
+  ganttChart.innerHTML = '';
+  
+  // Create time scale
+  const timeScale = document.createElement('div');
+  timeScale.className = 'time-scale';
+  
+  let scaleItems = [];
+  if (timeframe === 'months') {
+    scaleItems = ['January', 'February', 'March', 'April', 'May', 'June', 
+                 'July', 'August', 'September', 'October', 'November', 'December'];
+  } else if (timeframe === 'weeks') {
+    for (let i = 1; i <= 12; i++) {
+      scaleItems.push(`Week ${i}`);
+    }
+  } else {
+    scaleItems = ['Q1', 'Q2', 'Q3', 'Q4', '', '', '', '', '', '', '', ''];
+  }
+  
+  scaleItems.forEach(item => {
+    const span = document.createElement('span');
+    span.textContent = item;
+    timeScale.appendChild(span);
+  });
+  
+  ganttChart.appendChild(timeScale);
+  
+  // Rest of the Gantt chart code remains the same...
+  // Create projects and tasks
+  projects.forEach(project => {
+    // Create project label row
+    const projectLabel = document.createElement('div');
+    projectLabel.className = 'project-label';
+    projectLabel.textContent = project.name;
+    projectLabel.onclick = function() { showProjectDetails(project.id); };
+    projectLabel.style.cursor = 'pointer';
+    ganttChart.appendChild(projectLabel);
+    
+    // Create empty cells for alignment
+    for (let i = 0; i < 12; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.style.gridColumn = `${i + 2}`;
+      ganttChart.appendChild(emptyCell);
+    }
+    
+    // Create task bars
+    project.tasks.forEach(task => {
+      const taskDiv = document.createElement('div');
+      taskDiv.className = 'project-row';
+      
+      const taskBar = document.createElement('div');
+      taskBar.className = 'task-bar';
+      taskBar.textContent = task.name;
+      taskBar.style.backgroundColor = task.color;
+      taskBar.style.gridColumn = `${task.start + 2}/${task.end + 2}`;
+      
+      if (task.milestone) {
+        const milestone = document.createElement('div');
+        milestone.className = 'milestone';
+        taskBar.appendChild(milestone);
+        taskBar.textContent = ''; // Clear text for milestone
+      }
+      
+      taskBar.onclick = function(e) {
+        e.stopPropagation();
+        showProjectDetails(project.id);
+      };
+      
+      ganttChart.appendChild(taskBar);
+    });
+  });
+  document.getElementById('gantt-code').textContent = `// Gantt Chart Configuration with Multiple Projects
+const projectsData = ${JSON.stringify(projects, null, 2)};
+
+// Render function
+function renderGanttChart(data) {
+  // Implementation would go here
+}`;
+}
+
+function showProjectDetails(projectId) {
+  const project = projects.find(p => p.id === projectId);
+  if (!project) return;
+  
+  const detailsContainer = document.getElementById('project-details');
+  detailsContainer.innerHTML = `
+    <h3>${project.name} Details</h3>
+    <div class="project-details-row">
+      <span class="project-details-label">Owner:</span>
+      <span>${project.owner}</span>
+    </div>
+    <div class="project-details-row">
+      <span class="project-details-label">Status:</span>
+      <span>${project.status}</span>
+    </div>
+    <div class="project-details-row">
+      <span class="project-details-label">Progress:</span>
+      <span>${project.progress}%</span>
+    </div>
+    <div class="project-details-row">
+      <span class="project-details-label">Current Timeline:</span>
+      ${project.calendar}
+    </div>
+  `;
+}
+
+function randomizeGantt() {
+  const projectNames = [
+    'Cloud Migration', 
+    'Product Launch', 
+    'UX Overhaul', 
+    'Data Analytics', 
+    'Security Upgrade',
+    'CRM Implementation',
+    'IoT Integration',
+    'AI Prototype'
+  ];
+  
+  const taskNames = [
+    'Research', 'Planning', 'Design', 'Development', 
+    'Testing', 'Documentation', 'Deployment', 'Review',
+    'Sprint 1', 'Sprint 2', 'Sprint 3', 'Retrospective',
+    'User Testing', 'QA', 'Bug Fixes', 'Training'
+  ];
+  
+  const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', 
+                 '#f39c12', '#1abc9c', '#8e44ad', '#27ae60'];
+  
+  const statuses = ['Not Started', 'In Progress', 'On Track', 'Delayed', 'Completed'];
+  
+  // Generate 4-6 random projects
+  projects = [];
+  const projectCount = getRandomInt(4, 6);
+  
+  for (let i = 0; i < projectCount; i++) {
+    const taskCount = getRandomInt(3, 6);
+    const tasks = [];
+    
+    for (let j = 0; j < taskCount; j++) {
+      const start = getRandomInt(0, 8);
+      const duration = getRandomInt(1, 4);
+      const end = Math.min(start + duration, 11);
+      const isMilestone = j === taskCount - 1 || Math.random() > 0.8;
+      
+      tasks.push({
+        name: taskNames[getRandomInt(0, taskNames.length - 1)],
+        start: start,
+        end: isMilestone ? start : end,
+        color: colors[getRandomInt(0, colors.length - 1)],
+        milestone: isMilestone
+      });
+    }
+    
+    projects.push({
+      id: i + 1,
+      name: projectNames[getRandomInt(0, projectNames.length - 1)],
+      tasks: tasks,
+      owner: `Team ${String.fromCharCode(65 + i)}`,
+      status: statuses[getRandomInt(0, statuses.length - 1)],
+      progress: getRandomInt(0, 100),
+      calendar: generateMiniCalendar()
+    });
+  }
+  
+  updateGantt();
+  
+  // Update code display with random data
+  document.getElementById('gantt-code').textContent = `// Randomized Gantt Chart Data
+const randomProjectsData = ${JSON.stringify(projects, null, 2)};`;
+}
+
+function addNewProject() {
+  const projectNames = [
+    'New Feature Development',
+    'Infrastructure Upgrade',
+    'Customer Portal',
+    'Performance Optimization',
+    'Mobile App V2'
+  ];
+  
+  const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f39c12'];
+  
+  const newId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+  const taskCount = getRandomInt(3, 5);
+  const tasks = [];
+  
+  for (let j = 0; j < taskCount; j++) {
+    const start = getRandomInt(0, 8);
+    const duration = getRandomInt(1, 3);
+    const end = Math.min(start + duration, 11);
+    const isMilestone = j === taskCount - 1;
+    
+    tasks.push({
+      name: `Phase ${j + 1}`,
+      start: start,
+      end: isMilestone ? start : end,
+      color: colors[j % colors.length],
+      milestone: isMilestone
+    });
+  }
+  
+  const newProject = {
+    id: newId,
+    name: projectNames[getRandomInt(0, projectNames.length - 1)],
+    tasks: tasks,
+    owner: 'New Team',
+    status: 'Not Started',
+    progress: 0,
+    calendar: generateMiniCalendar()
+  };
+  
+  projects.push(newProject);
+  updateGantt();
+  showProjectDetails(newId);
+}
+
+// Time Blocks Functions
+function updateTimeBlocks() {
+  const mode = document.getElementById('timeblock-mode').value;
+  const dayBlocks = document.getElementById('day-blocks');
+  dayBlocks.innerHTML = '';
+  
+  if (mode === 'week') {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const busyness = [];
+    
+    days.forEach(day => {
+      const busyValue = getRandomInt(10, 90);
+      busyness.push(busyValue);
+      
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'day';
+      dayDiv.textContent = day;
+      dayDiv.style.setProperty('--busyness', `${busyValue}%`);
+      dayDiv.onclick = function() {
+        const newBusyness = prompt(`Set busyness for ${day} (0-100):`, 
+          parseInt(this.style.getPropertyValue('--busyness')));
+        if (newBusyness !== null) {
+          this.style.setProperty('--busyness', `${Math.min(100, Math.max(0, parseInt(newBusyness) || 0))}%`);
+        }
+      };
+      dayBlocks.appendChild(dayDiv);
+    });
+    
+    document.getElementById('timeblocks-code').textContent = `// Weekly Time Blocks Configuration
+const weekData = {
+  days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  busyness: ${JSON.stringify(busyness)} // 0-100 values
+};
+
+// Render function
+function renderWeekBlocks(data) {
+  // Implementation would go here
+}`;
+  } else {
+    const hours = ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM', '12AM'];
+    const busyness = [];
+    
+    hours.forEach(hour => {
+      const busyValue = getRandomInt(10, 90);
+      busyness.push(busyValue);
+      
+      const hourDiv = document.createElement('div');
+      hourDiv.className = 'day';
+      hourDiv.textContent = hour;
+      hourDiv.style.setProperty('--busyness', `${busyValue}%`);
+      hourDiv.onclick = function() {
+        const newBusyness = prompt(`Set busyness for ${hour} (0-100):`, 
+          parseInt(this.style.getPropertyValue('--busyness')));
+        if (newBusyness !== null) {
+          this.style.setProperty('--busyness', `${Math.min(100, Math.max(0, parseInt(newBusyness) || 0))}%`);
+        }
+      };
+      dayBlocks.appendChild(hourDiv);
+    });
+    
+    document.getElementById('timeblocks-code').textContent = `// Daily Time Blocks Configuration
+const dayData = {
+  hours: ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM', '12AM'],
+  busyness: ${JSON.stringify(busyness)} // 0-100 values
+};
+
+// Render function
+function renderDayBlocks(data) {
+  // Implementation would go here
+}`;
+  }
+}
+
+function randomizeTimeBlocks() {
+  const blocks = document.querySelectorAll('#day-blocks .day');
+  blocks.forEach(block => {
+    block.style.setProperty('--busyness', `${getRandomInt(10, 90)}%`);
+  });
+}
+
+// Circular Time Functions
+function updateCircularTime() {
+  const mode = document.getElementById('circular-mode').value;
+  const timeCircle = document.getElementById('time-circle');
+  
+  if (mode === 'day') {
+    timeCircle.style.setProperty('--morning-end', '30%');
+    timeCircle.style.setProperty('--afternoon-end', '60%');
+    timeCircle.style.setProperty('--evening-end', '85%');
+    
+    const labels = timeCircle.querySelectorAll('.time-label');
+    labels[0].textContent = 'Morning';
+    labels[1].textContent = 'Afternoon';
+    labels[2].textContent = 'Evening';
+    labels[3].textContent = 'Night';
+    
+    document.getElementById('circular-code').textContent = `// Circular Day Configuration
+const dayCircleData = {
+  segments: [
+    { name: 'Morning', end: 30, color: '#f39c12' },
+    { name: 'Afternoon', end: 60, color: '#3498db' },
+    { name: 'Evening', end: 85, color: '#9b59b6' },
+    { name: 'Night', end: 100, color: '#2c3e50' }
+  ]
+};
+
+// Render function
+function renderDayCircle(data) {
+  // Implementation would go here
+}`;
+  } else {
+    timeCircle.style.setProperty('--morning-end', '28%');
+    timeCircle.style.setProperty('--afternoon-end', '71%');
+    timeCircle.style.setProperty('--evening-end', '85%');
+    
+    const labels = timeCircle.querySelectorAll('.time-label');
+    labels[0].textContent = 'Mon-Tue';
+    labels[1].textContent = 'Wed-Fri';
+    labels[2].textContent = 'Sat';
+    labels[3].textContent = 'Sun';
+    
+    document.getElementById('circular-code').textContent = `// Circular Week Configuration
+const weekCircleData = {
+  segments: [
+    { name: 'Mon-Tue', end: 28, color: '#f39c12' },
+    { name: 'Wed-Fri', end: 71, color: '#3498db' },
+    { name: 'Sat', end: 85, color: '#9b59b6' },
+    { name: 'Sun', end: 100, color: '#2c3e50' }
+  ]
+};
+
+// Render function
+function renderWeekCircle(data) {
+  // Implementation would go here
+}`;
+  }
+}
+
+function randomizeCircularTime() {
+  const timeCircle = document.getElementById('time-circle');
+  const morningEnd = getRandomInt(20, 40);
+  const afternoonEnd = getRandomInt(50, 70);
+  const eveningEnd = getRandomInt(80, 95);
+  
+  timeCircle.style.setProperty('--morning-end', `${morningEnd}%`);
+  timeCircle.style.setProperty('--afternoon-end', `${afternoonEnd}%`);
+  timeCircle.style.setProperty('--evening-end', `${eveningEnd}%`);
+  
+  // Update code display with random data
+  document.getElementById('circular-code').textContent = `// Randomized Circular Time Data
+const randomCircleData = {
+  segments: [
+    { name: 'Segment 1', end: ${morningEnd}, color: '#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}' },
+    { name: 'Segment 2', end: ${afternoonEnd}, color: '#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}' },
+    { name: 'Segment 3', end: ${eveningEnd}, color: '#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}' },
+    { name: 'Segment 4', end: 100, color: '#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}' }
+  ]
+};`;
+}
+
+// Heatmap Calendar Functions
+function updateHeatmap() {
+  const mode = document.getElementById('heatmap-mode').value;
+  const heatmapGrid = document.getElementById('heatmap-grid');
+  heatmapGrid.innerHTML = '';
+  
+  // Reset grid template columns
+  heatmapGrid.style.gridTemplateColumns = mode === 'year' ? 'repeat(52, 1fr)' : 'repeat(4, 1fr)';
+  
+  const cellCount = mode === 'year' ? 364 : 28;
+  const activityLevels = [];
+  
+  for (let i = 0; i < cellCount; i++) {
+    const activity = getRandomInt(0, 100);
+    activityLevels.push(activity);
+    
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    cell.style.backgroundColor = `hsl(0, 0%, ${100 - activity}%)`;
+    cell.onclick = function() {
+      const currentActivity = 100 - parseInt(this.style.backgroundColor.split(',')[1]);
+      const newValue = prompt('Set activity level (0-100):', currentActivity);
+      if (newValue !== null) {
+        const validatedValue = Math.min(100, Math.max(0, parseInt(newValue) || 0));
+        this.style.backgroundColor = `hsl(0, 0%, ${100 - validatedValue}%`;
+      }
+    };
+    heatmapGrid.appendChild(cell);
+  }
+  
+  document.getElementById('heatmap-code').textContent = `// ${mode === 'year' ? 'Year' : 'Month'} Heatmap Configuration
+const heatmapData = {
+  cells: ${JSON.stringify(activityLevels)},
+  // Each value represents activity level (0-100)
+  // ${mode === 'year' ? '52 columns (weeks) x 7 rows (days)' : '4 columns (weeks) x 7 rows (days)'}
+};
+
+// Render function
+function renderHeatmap(data) {
+  // Implementation would go here
+}`;
+}
+
+function randomizeHeatmap() {
+  const cells = document.querySelectorAll('#heatmap-grid .heatmap-cell');
+  cells.forEach(cell => {
+    const activity = getRandomInt(0, 100);
+    cell.style.backgroundColor = `hsl(0, 0%, ${100 - activity}%)`;
+  });
+}
+
+// Initialize all visualizations
+function initializeVisualizations() {
+  updateGantt();
+  updateTimeBlocks();
+  updateCircularTime();
+  updateHeatmap();
+  // Show details for the first project by default
+  if (projects.length > 0) {
+    showProjectDetails(projects[0].id);
+  }
+}
+
+
+function toggleCode(id) {
+  const codeBlock = document.getElementById(id);
+  codeBlock.style.display = codeBlock.style.display === 'block' ? 'none' : 'block';
+}
+
+function copyCode(event, id) {
+  event.stopPropagation(); // prevent triggering toggle
+  const codeBlock = document.getElementById(id);
+  const text = codeBlock.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Code copied to clipboard!");
+  });
+}
+
+// Initialize when page loads
+window.onload = initializeVisualizations;
+</script>
+</body>
+</html>
